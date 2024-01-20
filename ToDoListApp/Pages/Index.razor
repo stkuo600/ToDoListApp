@@ -1,0 +1,53 @@
+﻿@page "/"
+@using MudBlazor
+
+<PageTitle>To-Do List</PageTitle>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="4" sm="2">
+        <MudText Typo="Typo.h6" GutterBottom="true">To-Do LIts</MudText>
+        <MudPaper Width="100%">
+            <MudList Clickable="true">
+                @foreach (var item in Items)
+                {
+                    <MudListItem OnClick="(() => RemoveItem(item))" Text="@item" Icon="@Icons.Material.Filled.Bookmark"/>
+                }
+            </MudList>
+        </MudPaper>
+
+        <MudTextField Class="mt-4" @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined"></MudTextField>
+        
+        <MudButton Class="mt-4" OnClick="AddListItem" Variant="Variant.Filled" Color="Color.Primary">Add To List</MudButton>
+        @if (displayWarning)
+        {
+            <MudAlert Severity="Severity.Warning">The value is already in the list.</MudAlert>
+        }
+        
+    </MudItem>
+</MudGrid>
+@code {
+    public string TextValue { get; set; } = "";
+    public List<string> Items = new List<string>();
+    public bool displayWarning = false;
+
+    public async Task AddListItem()
+    {
+        if (!Items.Contains(TextValue))
+        {
+            Items.Add(TextValue);
+            TextValue = "";
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            displayWarning = true;
+        }
+    }
+
+    public async Task RemoveItem(string item)
+    {
+        Items.Remove(item);
+        await InvokeAsync(StateHasChanged);
+    }
+
+}
